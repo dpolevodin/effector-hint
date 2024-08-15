@@ -1,16 +1,23 @@
-import { createApi, createEffect, createEvent, createStore, forward, sample, type Store } from 'effector';
+import { createApi, createStore, sample } from 'effector';
+import { createGate } from 'effector-react';
 import { UseFormReturn } from 'react-hook-form';
 
 type FormValues = any;
 type Form = UseFormReturn<FormValues>;
 
+const DEFAULT_FORM_VALUES = {
+    fieldName: 'field',
+}
+
 /** Создать Gate для передачи в него инстанса формы в компоненте, созданной с помощью react-hook-form */
-export const DrawerGate = createGate<Form>();
+export const ComponentGate = createGate<Form>();
+
+const $formState = createStore<Form | null>(null);
 export const $externalData = createStore<any | null>(null);
 
 /** Записать инстанс формы в стейт для дальнейшего создания api, чтобы работать с методами формы внутри модели эффектора */
 sample({
-    source: DrawerGate.state,
+    source: ComponentGate.state,
     filter: (form) => !!form,
     target: $formState,
 });
